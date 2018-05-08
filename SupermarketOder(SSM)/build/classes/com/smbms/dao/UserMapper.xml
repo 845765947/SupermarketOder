@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.smbms.dao.UserMapper">
+	<select id="getLoginUser" resultType="User" parameterType="string">
+		select * from smbms_user
+		<trim prefix="where">
+			<if test="userCode!=null">
+				userCode=${userCode}
+			</if>
+		</trim>
+	</select>
+
+	<select id="getUserList" resultType="User" parameterType="string">
+		select * from smbms_user
+		<trim prefix="where" prefixOverrides="and||or">
+			<if test="queryname!=''">and userName LIKE CONCAT('%',#{queryname},'%')</if>
+			<if test="queryUserRole!=''">and userRole=#{queryUserRole}</if>
+		</trim>
+		LIMIT #{currentPageNo},#{pageSize}
+	</select>
+
+	<select id="getUserCount" resultType="int">
+		select count(1) as count from smbms_user u,smbms_role r
+		<trim prefix="where" prefixOverrides="and||or">
+			<if test="userName!='' ">and u.userName like
+				CONCAT('%',#{userName},'%')</if>
+			<if test="userRole>0 ">and u.userRole=#{userRole} </if>
+		</trim>
+	</select>
+
+	<select id="getUserById" resultType="User" parameterType="string">
+		select
+		u.*,r.roleName as userRoleName from smbms_user u,smbms_role r where
+		u.id=#{id} and u.userRole = r.id
+	</select>
+
+	<insert id="add" parameterType="User">
+		INSERT INTO smbms_user
+		(userCode,userName,userPassword,gender,birthday,phone,address,userRole,createdBy,creationDate,modifyBy,modifyDate,idPicPath,workPicPath)
+		VALUES(#{userCode},#{userName},#{userPassword},#{gender},#{birthday},#{phone},#{address},#{userRole},#{createdBy},#{creationDate},#{modifyBy},#{modifyDate},#{idPicPath},#{workPicPath})
+	</insert>
+
+	<update id="updatePwd">
+		UPDATE smbms_user SET userPassword=#{pwd} WHERE
+		id=#{id}
+	</update>
+
+	<update id="modify" parameterType="User">
+		UPDATE smbms_user SET
+		userName=#{userName},gender=#{gender},birthday=#{birthday},phone=#{phone},address=#{address},userRole=#{userRole},modifyBy=#{modifyBy},modifyDate=#{modifyDate}
+		where id=#{id}
+	</update>
+
+	<delete id="deleteUserById" parameterType="int">
+		delete from smbms_user
+		where id=#{id}
+	</delete>
+
+</mapper>   
+       
