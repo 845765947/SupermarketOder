@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.smbms.dao.ProviderMapper">
+	<select id="getProviderCount" resultType="int">
+		SELECT count(1) from smbms_provider
+		<trim prefix="where" prefixOverrides="and||or">
+			<if test="queryProCode!='' and queryProCode!=null">proCode =#{queryProCode}</if>
+			<if test="queryProName!=''">proName like CONCAT('%',#{queryProName},'%')</if>
+		</trim>
+	</select>
+
+	<select id="getProviderList" resultType="Provider">
+		select * from smbms_provider
+		<trim prefix="where" prefixOverrides="and||or">
+			<if test="queryProName!=''">and proName LIKE CONCAT('%',#{queryProName},'%')</if>
+			<if test="queryProCode!=''and queryProCode!=null ">and proCode=#{queryProCode}</if>
+		</trim>
+		LIMIT #{currentPageNo},#{pageSize}
+	</select>
+
+	<select id="selectId" parameterType="String" resultType="Provider">
+		select *
+		FROM smbms_provider
+		WHERE id=#{providerid}
+	</select>
+
+	<select id="addProvider" parameterType="Provider" resultType="boolean">
+		insert INTO smbms_provider
+		(proCode,proName,proDesc,proContact,proPhone,proAddress,`proFax`,createdBy,creationDate,modifyDate,modifyBy,businessLicense,organizationCodeCertificate)
+		values(#{proCode},#{proName},#{proDesc},#{proContact},#{proPhone},#{proAddress},#{proFax},#{createdBy},#{creationDate},#{modifyDate},#{modifyBy},#{businessLicense},#{organizationCodeCertificate})
+	</select>
+
+	<update id="updateProvider" parameterType="Provider">
+		UPDATE smbms_provider
+		SET proCode=#{proCode},proName=#{proName},
+		proDesc=#{proDesc},proContact=#{proContact},proPhone=#{proPhone},proAddress=#{proAddress},proFax=#{proFax}
+		,createdBy=#{createdBy},creationDate=#{creationDate},modifyDate=#{modifyDate},modifyBy=#{modifyBy},businessLicense=#{businessLicense}
+		,organizationCodeCertificate=#{organizationCodeCertificate}
+		where
+		id=#{id}
+	</update>
+
+	<delete id="deleteProvider" parameterType="int">
+		delete from smbms_provider WHERE id=#{proid}
+	</delete>
+
+</mapper>   
+        
